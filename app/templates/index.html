@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Home - CodeHub{% endblock %}
+{% block content %}
+<h1>Recent Questions</h1>
+{% for q in questions %}
+  <div class="mb-3">
+    <h4><a href="{{ url_for('main.question_detail', question_id=q.id) }}">{{ q.title }}</a></h4>
+    <p>{{ q.body[:200] }}</p>
+    <div>
+    {% for t in q.tags %}
+      <span class="badge bg-secondary">{{ t.name }}</span>
+    {% endfor %}
+    </div>
+  </div>
+{% else %}
+  <p>No questions yet.</p>
+{% endfor %}
+{% endblock %}
