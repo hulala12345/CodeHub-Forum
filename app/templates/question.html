@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ question.title }}{% endblock %}
+{% block content %}
+<h1>{{ question.title }}</h1>
+<p>{{ question.body }}</p>
+<div>
+  {% for t in question.tags %}
+    <span class="badge bg-secondary">{{ t.name }}</span>
+  {% endfor %}
+</div>
+<hr/>
+<h3>Answers</h3>
+{% for a in question.answers %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <pre><code>{{ a.body }}</code></pre>
+      <form method="post" action="{{ url_for('main.like_answer', answer_id=a.id) }}">
+        <button class="btn btn-sm btn-outline-primary">Like ({{ a.votes|length }})</button>
+      </form>
+      <h6>Comments</h6>
+      {% for c in a.comments %}
+        <p>{{ c.body }} - {{ c.author.username }}</p>
+      {% endfor %}
+      {% if current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('main.comment_answer', answer_id=a.id) }}">
+          {{ form.hidden_tag() }}
+          {{ form.body(class='form-control', rows=2) }}
+          {{ form.submit(class='btn btn-sm btn-secondary mt-1') }}
+        </form>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <p>No answers yet.</p>
+{% endfor %}
+{% if current_user.is_authenticated %}
+  <h4>Your Answer</h4>
+  <form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.body(class='form-control', rows=4) }}</div>
+    {{ form.submit(class='btn btn-primary') }}
+  </form>
+{% else %}
+  <p>Please <a href="{{ url_for('auth.login') }}">login</a> to answer.</p>
+{% endif %}
+{% endblock %}
